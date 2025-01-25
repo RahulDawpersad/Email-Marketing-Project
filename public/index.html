@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe to Our Newsletter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f7f7f7;
+      margin: 0;
+    }
+
+    .subscription-container {
+      background-color: #fff;
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      border-radius: 8px;
+      width: 300px;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #00796b;
+    }
+  </style>
+</head>
+<body>
+  <div class="subscription-container">
+    <h2>Subscribe to Our Newsletter</h2>
+    <form id="subscribe-form" onsubmit="return validateForm()">
+      <input type="text" name="firstName" id="firstName" placeholder="Enter your first name" required />
+      <input type="text" name="lastName" id="lastName" placeholder="Enter your last name" required />
+      <input type="email" name="email" id="email" placeholder="Enter your email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    async function validateForm() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message');
+
+      if (!firstName || !lastName || !email) {
+        message.textContent = 'All fields are required.';
+        message.style.color = '#f44336';
+        return false;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ firstName, lastName, email }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          message.textContent = data.message;
+          message.style.color = '#4CAF50';
+        } else {
+          message.textContent = data.message;
+          message.style.color = '#f44336';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        message.textContent = 'There was an error. Please try again later.';
+        message.style.color = '#f44336';
+      }
+
+      return false; // Prevent form submission
+    }
+  </script>
+</body>
+</html>
