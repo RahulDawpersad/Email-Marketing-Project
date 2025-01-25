@@ -1,125 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Email Subscription</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
-
-    .container {
-      background-color: #fff;
-      padding: 30px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-    }
-
-    input[type="text"],
-    input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      width: 100%;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    .message {
-      margin-top: 20px;
-      font-size: 14px;
-    }
-
-    .message.success {
-      color: #4CAF50;
-    }
-
-    .message.error {
-      color: #f44336;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Subscription</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #eee;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Subscribe to our Newsletter</h1>
-    <form id="subscribeForm" onsubmit="return validateForm()">
-      <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
-      <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
-      <input type="email" id="email" name="email" placeholder="Email Address" required>
-      <button type="submit">Subscribe</button>
+
+<div class="container">
+    <h1>Email Subscription</h1>
+    <form id="subscribeForm">
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit">Subscribe</button>
     </form>
+
     <div id="message" class="message"></div>
-  </div>
+</div>
 
-  <script>
-    async function validateForm() {
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const message = document.getElementById('message');
+<script>
+    // Define the URL of the serverless API endpoint
+    const apiUrl = window.location.origin + '/api/subscribe';  // Dynamic API URL for Vercel
 
-      if (!firstName || !lastName || !email) {
-        message.textContent = 'All fields are required.';
-        message.style.color = '#f44336';
-        return false;
-      }
+    const subscribeForm = document.getElementById('subscribeForm');
+    subscribeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      const apiUrl = window.location.origin + '/api/subscribe';  // Use the production API URL
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ firstName, lastName, email }),
-        });
+        // Clear any previous messages
+        const messageDiv = document.getElementById('message');
+        messageDiv.innerHTML = '';
 
-        const data = await response.json();
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ firstName, lastName, email }),
+            });
 
-        if (response.ok) {
-          message.textContent = data.message;
-          message.style.color = '#4CAF50';
-        } else {
-          message.textContent = data.message;
-          message.style.color = '#f44336';
+            const result = await response.json();
+
+            if (response.ok) {
+                messageDiv.className = 'message success';
+                messageDiv.textContent = result.message;  // Display success message
+            } else {
+                messageDiv.className = 'message error';
+                messageDiv.textContent = result.message;  // Display error message
+            }
+        } catch (error) {
+            messageDiv.className = 'message error';
+            messageDiv.textContent = 'An unexpected error occurred. Please try again later.';  // Display error
         }
-      } catch (error) {
-        console.error('Error:', error);
-        message.textContent = 'There was an error. Please try again later.';
-        message.style.color = '#f44336';
-      }
+    });
+</script>
 
-      return false; // Prevent form submission
-    }
-  </script>
 </body>
 </html>
