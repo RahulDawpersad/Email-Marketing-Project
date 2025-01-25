@@ -3,46 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Subscribe to Our Newsletter</title>
+  <title>Email Subscription</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f7f7f7;
-      margin: 0;
+      background-color: #f4f4f9;
     }
 
-    .subscription-container {
+    .container {
       background-color: #fff;
       padding: 30px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
-      width: 300px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
     }
 
-    h2 {
-      font-size: 24px;
-      color: #333;
+    h1 {
+      margin-bottom: 20px;
     }
 
-    input {
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
       padding: 10px;
-      width: 80%;
       margin: 10px 0;
-      border: 1px solid #ccc;
+      border: 1px solid #ddd;
       border-radius: 4px;
     }
 
     button {
-      padding: 10px 20px;
       background-color: #4CAF50;
       color: white;
+      padding: 12px;
       border: none;
       border-radius: 4px;
+      width: 100%;
       cursor: pointer;
     }
 
@@ -50,23 +53,30 @@
       background-color: #45a049;
     }
 
-    #message {
-      margin-top: 10px;
+    .message {
+      margin-top: 20px;
       font-size: 14px;
-      color: #00796b;
+    }
+
+    .message.success {
+      color: #4CAF50;
+    }
+
+    .message.error {
+      color: #f44336;
     }
   </style>
 </head>
 <body>
-  <div class="subscription-container">
-    <h2>Subscribe to Our Newsletter</h2>
-    <form id="subscribe-form" onsubmit="return validateForm()">
-      <input type="text" name="firstName" id="firstName" placeholder="Enter your first name" required />
-      <input type="text" name="lastName" id="lastName" placeholder="Enter your last name" required />
-      <input type="email" name="email" id="email" placeholder="Enter your email" required />
+  <div class="container">
+    <h1>Subscribe to our Newsletter</h1>
+    <form id="subscribeForm" onsubmit="return validateForm()">
+      <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+      <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+      <input type="email" id="email" name="email" placeholder="Email Address" required>
       <button type="submit">Subscribe</button>
     </form>
-    <div id="message"></div>
+    <div id="message" class="message"></div>
   </div>
 
   <script>
@@ -75,16 +85,15 @@
       const lastName = document.getElementById('lastName').value.trim();
       const email = document.getElementById('email').value.trim();
       const message = document.getElementById('message');
-  
+
       if (!firstName || !lastName || !email) {
         message.textContent = 'All fields are required.';
         message.style.color = '#f44336';
         return false;
       }
-  
-      // Use the production URL dynamically
-      const apiUrl = window.location.origin + '/subscribe';  // Will use production URL
-  
+
+      const apiUrl = window.location.origin + '/api/subscribe';  // Use the production API URL
+
       try {
         const response = await fetch(apiUrl, {
           method: 'POST',
@@ -93,9 +102,9 @@
           },
           body: JSON.stringify({ firstName, lastName, email }),
         });
-  
+
         const data = await response.json();
-  
+
         if (response.ok) {
           message.textContent = data.message;
           message.style.color = '#4CAF50';
@@ -108,10 +117,9 @@
         message.textContent = 'There was an error. Please try again later.';
         message.style.color = '#f44336';
       }
-  
+
       return false; // Prevent form submission
     }
   </script>
-  
 </body>
 </html>
