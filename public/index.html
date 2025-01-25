@@ -75,24 +75,27 @@
       const lastName = document.getElementById('lastName').value.trim();
       const email = document.getElementById('email').value.trim();
       const message = document.getElementById('message');
-
+  
       if (!firstName || !lastName || !email) {
         message.textContent = 'All fields are required.';
         message.style.color = '#f44336';
         return false;
       }
-
+  
+      // Use the production URL dynamically
+      const apiUrl = window.location.origin + '/subscribe';  // Will use production URL
+  
       try {
-        const response = await fetch('http://localhost:3000/subscribe', {
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ firstName, lastName, email }),
         });
-
+  
         const data = await response.json();
-
+  
         if (response.ok) {
           message.textContent = data.message;
           message.style.color = '#4CAF50';
@@ -105,9 +108,10 @@
         message.textContent = 'There was an error. Please try again later.';
         message.style.color = '#f44336';
       }
-
+  
       return false; // Prevent form submission
     }
   </script>
+  
 </body>
 </html>
